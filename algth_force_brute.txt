@@ -1,0 +1,141 @@
+Tableau pour représenter les actions :
+
+| Action # | Coût par action (€) | Bénéfice (après 2 ans) |
+|----------|----------------------|------------------------|
+|    1     |         20           |           5%           |
+|    2     |         30           |          10%           |
+|    3     |         50           |          15%           |
+
+
+max_budget = 50
+
+Combinaisons possibles :
+
+Une seule action : (1), (2), (3)
+Deux actions : (1,2), (1,3), (2,3)
+Trois actions : (1,2,3)
+
+
+1. Avec 1 Action (2 possibilités) :
+   - Aucune action incluse
+   - Action-1 incluse
+
+2. Avec 2 Actions (4 possibilités) :
+   - Aucune action incluse
+   - Action-1 incluse
+   - Action-2 incluse
+   - Action-1 et Action-2 incluses
+
+3. Avec 3 Actions (8 possibilités) :
+   - Aucune action incluse
+   - Action-1 incluse
+   - Action-2 incluse
+   - Action-3 incluse
+   - Action-1 et Action-2 incluses
+   - Action-1 et Action-3 incluses
+   - Action-2 et Action-3 incluses
+   - Toutes les actions incluses
+
+
+Calcule du coût et du bénéfice de chaque combinaison :
+
+Aucune action incluse : Coût = 0, Bénéfice = 0 (Ne peut pas dépasser le bugt)
+Action-1 incluse : Coût = 20, Bénéfice = 5% * 20 = 1 (Incluse, reste 30 euro)
+Action-2 incluse : Coût = 30, Bénéfice = 10% * 30 = 3 (Incluse, reste 20 euro)
+Action-3 incluse : Coût = 50, Bénéfice = 15% * 50 = 7.5 (Incluse, reste 0 euro)
+Le "reste 0 euro" signifie simplement que tout le budget a été utilisé pour acheter le Coût par action
+
+Action-1 et Action-2 incluses : Coût = 50, Bénéfice = 1 + 3 = 4 (Incluse, reste 0 euro)
+Action-1 et Action-3 incluses : Coût = 70, Bénéfice = 1 + 7.5 = 8.5 (Ne peut pas etre incluse, dépasse le budget)
+Action-2 et Action-3 incluses : Coût = 80, Bénéfice = 3 + 7.5 = 10.5 (Ne peut pas etre incluse, dépasse le budget)
+Toutes les actions incluses : Coût = 100, Bénéfice = 1 + 3 + 7.5 = 11.5 (Ne peut pas etre incluse, dépasse le budget)
+
+Si Action-1 est incluse, le coût total est de 20 euros et
+le bénéfice est de 5%, donc soit 1. Le budget restant = 30euros (50 - 20).
+
+Avec 1 Action (2 possibilité) :
+Nombre de combinaisons = 2^1 = 2
+
+Avec 2 Actions (4 possibilité) :
+Nombre de combinaisons = 2^2 = 4
+
+Avec 3 Actions (8 possibilité) :
+Nombre de combinaisons = 2^3 = 8
+
+
+Les possibilités d'achats et les calculs associés, les combinaisons possibles :
+
+| Combinaison          | Coût total (€)  | Bénéfice total (€)  | Respecte le budget     |
+|----------------------|-----------------|---------------------|------------------------|
+| Aucune action incluse|       0         |         0           | Oui                    |
+| Action-1             |       20        |         1           | Oui                    |
+| Action-2             |       30        |         3           | Oui                    |
+| Action-3             |       50        |         7.5         | Oui                    |
+| Action-1 et Action-2 |       50        |         4           | Oui                    |
+| Action-1 et Action-3 |       70        |         8.5         | Non (dépasse le budget) |
+| Action-2 et Action-3 |       80        |         10.5        | Non (dépasse le budget) |
+| Toutes les actions   |      100        |         11.5        | Non (dépasse le budget) |
+
+Donc le meilleur bénéfice est de:  7.7
+
+                   Diagramme d'arbre de décision
+
+                        (Prise de décision)
+                             /     \
+                     (Acheter A1)   (Ne pas acheter A1)
+                      /       \
+           (Acheter A2)       (Ne pas acheter A2)
+            /      \               \
+    (Acheter A3)  (Ne pas acheter A3)
+
+
+Acheter A2 : Si on a choisi d'acheter l'Action-1, ensuite on décide si on veut acheter l'Action-2.
+Ne pas acheter A2 : Si on a choisi d'acheter l'Action-1, mais qu'on décide de ne pas acheter l'Action-2, on suit branche.
+Ne pas acheter A3
+
+
+
+Le pseudocode
+
+Actions:
+Action-1: Coût = 20 euros, Bénéfice = 5%
+Action-2: Coût = 30 euros, Bénéfice = 10%
+Action-3: Coût = 50 euros, Bénéfice = 15%
+... (Liste complète des actions)
+
+Variables:
+budget_max = 500
+
+Fonction CalculerBenefice(combinaison):
+    cout <- 0
+    benefice <- 0
+
+    Pour chaque action dans combinaison:
+        cout_total += Coût de l'action
+        benefice_total += Bénéfice de l'action * Coût de l'action
+
+    Retourner cout_total, benefice_total
+
+Fonction TrouverMeilleurBenefice(budget_max):
+    meilleur_benefice <- 0
+    meilleur_combinaison <- None
+
+    Pour chaque taille_combinaison de 1 à nombre_total_d'actions:
+        Pour chaque combinaison possible dans les actions de taille_combinaison:
+            cout_total, benefice_total <- CalculerBenefice(combinaison)
+
+            Si cout_total <= budget_max et benefice_total > meilleur_benefice:
+                meilleur_benefice <- benefice_total
+                meilleur_benefice <- benefice_total
+
+    Retourner meilleur_benefice,  meilleur_combinaison
+
+
+Début de l'algorithme:
+
+    meilleur_benefice, meilleur_combinaison <- TrouverMeilleurBenefice(actions, budget_max)
+    Afficher "Meilleur bénéfice après deux ans : ' + meilleur_benefice + ' euros"
+    Afficher "Meilleur combinaison : ' + meilleur_combinaison' "
+
+Fin de l'algorithme.
+
