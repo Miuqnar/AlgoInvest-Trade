@@ -138,4 +138,3 @@ Début de l'algorithme:
     Afficher "Meilleur combinaison : ' + meilleur_combinaison' "
 
 Fin de l'algorithme.
-

@@ -68,12 +68,49 @@ def find_best_combination(budget):
     return current_best_profit, current_best_combination
 
 
+def knapsack(items, capacity):
+    n = len(items)
+    dp = [[0] * (capacity + 1) for _ in range(n + 1)]
+    included = [[False] * (capacity + 1) for _ in range(n + 1)]
+
+    for i in range(1, n + 1):
+        for w in range(1, capacity + 1):
+            name, weight, value = items[i - 1]
+            if weight <= w:
+                dp[i][w] = max(dp[i - 1][w], dp[i - 1][w - weight] + value)
+                if dp[i][w] == dp[i - 1][w - weight] + value:
+                    included[i][w] = True
+            else:
+                dp[i][w] = dp[i - 1][w]
+
+    max_value = dp[n][capacity]
+    selected_items = []
+    w = capacity
+    for i in range(n, 0, -1):
+        if included[i][w]:
+            selected_items.append(items[i - 1])
+            w -= items[i - 1][1]
+
+    return max_value, selected_items
+
+
 start_time = time.time()
 best_profit, best_combination = find_best_combination(budget_max)
-
-print("Meilleur bénéfice de tous les combinaisons:", round(best_profit, 2), "euros")
-print("Meilleur Combinaison:", best_combination)
-
 end_time = time.time()
-elapsed_time = end_time - start_time
-print(f" \nTemps écoulé: {elapsed_time:.2f} secondes", end="", flush=True)  # Formatage des chaînes .2f
+elapsed_time_brute_force = end_time - start_time
+
+print("Meilleur bénéfice de tous les combinaisons avec force brute:", round(best_profit, 2), "euros")
+print("Meilleur Combinaison:", best_combination)
+print(f"Temps écoulé: {elapsed_time_brute_force:.2f} secondes")
+
+# Mesure du temps pour la méthode du knapsack
+start_time = time.time()
+knapsack_items = [(i[0], i[1], i[2] * i[1]) for i in ACTIONS]
+max_value, selected_items = knapsack(knapsack_items, budget_max)
+end_time = time.time()
+elapsed_time_knapsack = end_time - start_time
+
+# Afficher les résultats
+print("\n\n Meilleur bénéfice (knapsack):", round(max_value, 2), "euros")
+print("Meilleur Combinaison: (knapsack):", selected_items)
+print(f"Temps écoulé: {elapsed_time_knapsack:.2f} secondes")
